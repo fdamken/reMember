@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "reAnki"
+version = "0.0.1"
+description = ""
+authors = ["Fabian Damken"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+numpy = "^1.26.4"
+pillow = "^10.3.0"
+python = "^3.12"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
