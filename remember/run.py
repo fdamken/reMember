@@ -83,13 +83,16 @@ def _extract_card_images(image: Image, card_boundaries: list[tuple[Rectangle, Re
 
 
 def _extract_flashcards(config: Config) -> list[Flashcard]:
-    image = PIL.Image.open(config.path)
-    card_boxes, (horizontal_separator_box, vertical_separators_boxes) = _extract_card_boxes(config, image)
-    card_boundaries = _extract_card_boundaries(config, image, card_boxes)
-    debug.show_boxes(config, image, card_boundaries, card_boxes, horizontal_separator_box, vertical_separators_boxes)
-    card_images = _extract_card_images(image, card_boundaries)
-    debug.show_card_images(config, image, card_images)
-    return [Flashcard(left, right) for left, right in card_images]
+    flashcards = []
+    for path in config.paths:
+        image = PIL.Image.open(path)
+        card_boxes, (horizontal_separator_box, vertical_separators_boxes) = _extract_card_boxes(config, image)
+        card_boundaries = _extract_card_boundaries(config, image, card_boxes)
+        debug.show_boxes(config, image, card_boundaries, card_boxes, horizontal_separator_box, vertical_separators_boxes)
+        card_images = _extract_card_images(image, card_boundaries)
+        debug.show_card_images(config, image, card_images)
+        flashcards += [Flashcard(left, right) for left, right in card_images]
+    return flashcards
 
 
 def _process(config: Config) -> None:

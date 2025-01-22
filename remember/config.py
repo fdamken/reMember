@@ -23,10 +23,8 @@ class FileType(StrEnum):
 
 @dataclass(frozen=True)
 class Config:
-    path: Path
-    file_type: FileType
+    paths: list[Path]
     page_width: float
-    page_height: float
     separator_clearance: float
     margin_top: float
     margin_left: float
@@ -40,9 +38,10 @@ class Config:
     @staticmethod
     def add_params(parser: ArgumentParser) -> None:
         parser.add_argument(
-            "file_path",
+            "file_paths",
             type=str,
-            help="path of the file (PDF, SVG, or PNG) to process",
+            nargs="+",
+            help="paths of the image files to process (e.g., PNG or JPEG)",
         )
         parser.add_argument(
             "-p",
@@ -73,8 +72,8 @@ class Config:
             "-mt",
             "--margin_top",
             type=float,
-            default=0.0,
-            help="Margin on the top before the vertical seperator search space starts. Defaults to none (zero).",
+            default=3 * 4.80798,
+            help="Margin on the top before the vertical seperator search space starts. Defaults to three boxes on rM’s ‘Dots S’ template.",
         )
         parser.add_argument(
             "-ml",
@@ -126,30 +125,21 @@ class Config:
 
     @staticmethod
     def from_argparse(args: Namespace) -> "Config":
+        assert args.page.endswith("-Portrait") or args.page.endswith("-Landscape"), f"invalid page orientation: {args.page}"
+        portrait = args.page.endswith("-Portrait")
         if args.page.startswith("rM-"):
-            page_width, page_height = 156.986, 209.550
+            page_width = 156.986 if portrait else 209.550
         elif args.page.startswith("A4-"):
-            page_width, page_height = 210.0, 297.0
+            page_width = 210.0 if portrait else 297.0
         elif args.page.startswith("Letter-"):
-            page_width, page_height = 215.9, 279.4
+            page_width = 215.9 if portrait else 279.4
         else:
             raise ValueError(f"invalid page standard: {args.page}")
-        if args.page.endswith("-Portrait"):
-            pass
-        elif args.page.endswith("-Landscape"):
-            page_width, page_height = page_height, page_width
-        else:
-            raise ValueError(f"invalid page orientation: {args.page}")
         if args.page_width is not None:
             page_width = args.page_width
-        if args.page_height is not None:
-            page_height = args.page_height
-        path = Path(args.file_path).absolute()
         return Config(
-            path,
-            FileType.from_suffix(path.suffix),
+            [Path(file_path).absolute() for file_path in args.file_paths],
             page_width,
-            page_height,
             args.separator_clearance,
             args.margin_top,
             args.margin_left,

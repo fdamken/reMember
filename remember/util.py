@@ -7,11 +7,11 @@ from remember.model import Rectangle
 
 
 def mm_to_pixels(config: Config, image: Image, value: float) -> int:
-    return np.ceil(value / config.page_height * image.height).astype(int)
+    return np.ceil(value / config.page_width * image.width).astype(int)
 
 
 def pixels_to_mm(config: Config, image: Image, value: float) -> float:
-    return value / image.height * config.page_height
+    return value / image.width * config.page_width
 
 
 def mm_to_in(value: float) -> float:

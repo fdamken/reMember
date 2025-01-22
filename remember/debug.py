@@ -16,7 +16,12 @@ def show_boxes(
 ) -> None:
     if not config.debug:
         return
-    fig, ax = plt.subplots(figsize=(util.mm_to_in(config.page_width), util.mm_to_in(config.page_height)))
+    fig, ax = plt.subplots(
+        figsize=(
+            util.mm_to_in(util.pixels_to_mm(config, image, image.width)),
+            util.mm_to_in(util.pixels_to_mm(config, image, image.height)),
+        ),
+    )
     ax.imshow(image)
     util.plot_rectangle(ax, horizontal_separator_box, color="tab:red", alpha=0.2)
     for vertical_separator_box in vertical_separators_boxes:
