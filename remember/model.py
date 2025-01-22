@@ -1,8 +1,7 @@
-import random
-import string
 from dataclasses import dataclass
 from functools import cached_property
 
+import genanki
 from PIL.Image import Image
 
 
@@ -39,7 +38,21 @@ class Flashcard:
     front: Image
     back: Image
 
+    def switch(self) -> "Flashcard":
+        return Flashcard(self.back, self.front)
+
     @cached_property
-    def front_guid(self) -> str:
-        # TODO: compute GUID from `self.front`
-        return "".join(random.choices(string.ascii_letters + string.digits, k=16))
+    def file_name_friendly_guid(self) -> str:
+        return str(hash(self.front.tobytes()))
+
+    @cached_property
+    def anki_guid(self) -> str:
+        return genanki.guid_for(hash(self.file_name_friendly_guid))
+
+    @property
+    def front_file_name(self) -> str:
+        return f"{self.file_name_friendly_guid}-front.png"
+
+    @property
+    def back_file_name(self) -> str:
+        return f"{self.file_name_friendly_guid}-back.png"

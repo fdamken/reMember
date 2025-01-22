@@ -5,7 +5,7 @@ import matplotlib as mlib
 import numpy as np
 from PIL.Image import Image
 
-from remember import bounding_box, debug, separators, util
+from remember import anki, bounding_box, debug, separators, util
 from remember.config import Config
 from remember.model import Flashcard, Rectangle
 
@@ -95,14 +95,13 @@ def _extract_flashcards(config: Config) -> list[Flashcard]:
     return flashcards
 
 
-def _process(config: Config) -> None:
-    flashcards = _extract_flashcards(config)
-
-
 def run() -> None:
     mlib.rcParams["figure.dpi"] = 300
 
     parser = ArgumentParser()
     Config.add_params(parser)
     config = Config.from_argparse(parser.parse_args())
-    _process(config)
+    flashcards = _extract_flashcards(config)
+    if config.switch_front_back:
+        flashcards = [flashcard.switch() for flashcard in flashcards]
+    anki.write_package(config, flashcards)

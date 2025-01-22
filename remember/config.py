@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from itertools import product
 from pathlib import Path
+from typing import Optional
 
 
 class FileType(StrEnum):
@@ -33,6 +34,10 @@ class Config:
     card_clearance: float
     black_threshold: int
     separator_threshold: float
+    switch_front_back: bool
+    deck_id: Optional[int]
+    deck_name: str
+    output_file: str
     debug: bool
 
     @staticmethod
@@ -117,6 +122,32 @@ class Config:
             "Defaults to .2 (20%) which seems to work reasonable. Larger values allow for more penetration into the separator space.",
         )
         parser.add_argument(
+            "-s",
+            "--switch_front_back",
+            action="store_true",
+            help="Switched front and back of cards. Defaults to left side front, right side back.",
+        )
+        parser.add_argument(
+            "-i",
+            "--deck_id",
+            type=int,
+            help="Anki deck ID. Defaults to a random one. When changing an existing deck, ensure to supply the correct ID!",
+        )
+        parser.add_argument(
+            "-n",
+            "--deck_name",
+            type=str,
+            default="reMember",
+            help="Anki deck name. Defaults to ‘reMember’.",
+        )
+        parser.add_argument(
+            "-o",
+            "--output_file",
+            type=str,
+            default="reMember.apkg",
+            help="Output file name for the Anki package. Defaults to ‘reMember.apkg’.",
+        )
+        parser.add_argument(
             "-d",
             "--debug",
             action="store_true",
@@ -148,5 +179,9 @@ class Config:
             args.separator_clearance if args.card_clearance is None else args.card_clearance,
             args.black_threshold,
             args.separator_threshold,
+            args.switch_front_back,
+            args.deck_id,
+            args.deck_name,
+            args.output_file,
             args.debug,
         )
