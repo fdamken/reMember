@@ -1,4 +1,9 @@
+import random
+import string
 from dataclasses import dataclass
+from functools import cached_property
+
+from PIL.Image import Image
 
 
 @dataclass(frozen=True)
@@ -27,3 +32,14 @@ class Rectangle:
     @property
     def height(self) -> int:
         return self.y2 - self.y1
+
+
+@dataclass(frozen=True)
+class Flashcard:
+    front: Image
+    back: Image
+
+    @cached_property
+    def front_guid(self) -> str:
+        # TODO: compute GUID from `self.front`
+        return "".join(random.choices(string.ascii_letters + string.digits, k=16))
