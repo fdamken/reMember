@@ -32,7 +32,7 @@ def write_package(config: Config, flashcards: list[Flashcard]) -> None:
             f"Ensure to save and supply it via ‘-i {deck_id}’ when altering this deck!"
         )
     else:
-        deck_id = config.deck_name
+        deck_id = config.deck_id
     with tempfile.TemporaryDirectory() as tmp_dir_name:
         tmp_dir = Path(tmp_dir_name)
         media_files = []
