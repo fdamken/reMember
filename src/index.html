@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>reMember</title>
+
+    <!-- https://github.com/krmanik/genanki-js -->
+    <script src="thirdparty/genanki-v1.0.5/sql.js"></script>
+    <script src="thirdparty/genanki-v1.0.5/jszip.min.js"></script>
+    <script src="thirdparty/genanki-v1.0.5/genanki.js"></script>
+    <script src="thirdparty/genanki-v1.0.5/FileSaver.min.js"></script>
+
+    <script src="lib/anki.js"></script>
+    <script src="lib/config.js"></script>
+    <script src="lib/main.js"></script>
+    <script src="lib/separators.js"></script>
+    <script src="lib/util.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+<h1>reMember</h1>
+<p>
+    This is a very simplistic tool for converting hand-written notes (e.g., on a <a href="https://remarkable.com/">reMarkable</a>)
+    to <a href="https://apps.ankiweb.net/">Anki</a> flashcards. It works by detecting lines surrounding flashcards as in the
+    example below and crops the image appropriately. At the moment this is extremely simplistic and all configuration options are
+    hidden in the code, but I plan on expanding (and prettifying) this tool in the future.
+</p>
+<p>
+    Usage: Just drop an image file below and the flashcards will be generated, triggering a download of an Anki package.
+</p>
+<p>
+    Note: Everything runs in your browser and no data is sent anywhere! If you want, you can also simply download this website and
+    execute everything locally.
+</p>
+<div>
+    <form id="form">
+        <input type="file" id="file"/>
+        <span id="loading" hidden="">Processing…</span>
+    </form>
+</div>
+<hr/>
+<footer>
+    Created by <a href="https://fabian.damken.net/">Fabian Damken</a> | Hosted on <a href="https://github.com/fdamken/reMember">GitHub</a>
+</footer>
+<canvas id="debug-canvas" hidden=""></canvas>
+</body>
+</html>
