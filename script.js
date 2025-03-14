@@ -23,9 +23,7 @@ const draw = function (ctx, box, color, alpha, mode) {
     }
 }
 
-const show_preview = function (config, image, debug_info) {
-    if (!config.debug) return;
-
+const show_preview = function (image, debug_info) {
     const canvas = document.querySelector("#preview-canvas");
     canvas.width = image.width;
     canvas.height = image.height;
@@ -86,22 +84,22 @@ const show_preview = function (config, image, debug_info) {
     canvas.classList.remove("d-none");
 };
 
-const make_processor = function (config, image) {
+const make_processor = function (image) {
     const handle_error = function (error) {
         alert(error);
         console.error(error);
         if (error instanceof reMember.util.ReMemberError) {
-            show_preview(config, image, error.debug_info);
+            show_preview(image, error.debug_info);
         }
     };
 
-    return function () {
+    return function (config) {
         try {
             const [flashcards, debug_info] = reMember.extract_flashcards(
                 config,
                 reMember.util.Image.from_html_image(image),
             );
-            show_preview(config, image, debug_info);
+            show_preview(image, debug_info);
             reMember.util.step_progress("write-anki-package");
             reMember.anki.write_to_package(config, flashcards).catch(handle_error).then(function () {
                 reMember.util.step_progress("download");
@@ -112,9 +110,9 @@ const make_processor = function (config, image) {
     };
 };
 
-
-window.onload = function () {
-    const config = new reMember.Config(
+const read_config = function () {
+    const form_deck_id = parseInt(document.querySelector("#deck-id").value);
+    return new reMember.Config(
         156.986, // rM-Portrait
         4.80798 / 2,  // half box
         3 * 4.80798,
@@ -129,19 +127,22 @@ window.onload = function () {
         true,
         true,
         true,
-        reMember.util.random_int(1 << 30, 1 << 31),
+        isNaN(form_deck_id) ? reMember.util.random_int(1 << 30, 1 << 31) : form_deck_id,
         "reMember",
         "reMember.apkg",
         true,
     );
+};
 
+
+window.onload = function () {
     const image = new Image();
     let image_loaded = false;
-    const process = make_processor(config, image);
+    const process = make_processor(image);
 
     image.addEventListener("load", function () {
         image_loaded = true;
-        process();
+        process(read_config());
     });
 
     const reader = new FileReader();

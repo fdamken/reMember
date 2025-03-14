@@ -34,6 +34,12 @@
             <div class="col-md-7 col-lg-8">
                 <h4 class="mb-3">Input</h4>
                 <form id="form">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="deck-id" min="0">
+                        <label for="deck-id">Deck ID</label>
+                        <small class="form-text text-muted">Leave empty to generate a random deck ID. The deck ID is also used to
+                            compute card IDs by numbering them from top to bottom.</small>
+                    </div>
                     <div class="input-group mb-3">
                         <input type="file" id="file" class="form-control" name="file" accept="image/*">
                     </div>

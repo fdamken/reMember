@@ -191,7 +191,6 @@ window.reMember.util = {
         const i = keys.indexOf(step);
         if (i < 0) throw new Error(`step ${step} not in ${reMember.util.progress_steps}`);
         const progress_bar = document.querySelector("#progress-bar");
-        console.log(`${i / (keys.length - 1) * 100}%`);
         progress_bar.style.width = `${i / (keys.length - 1) * 100}%`;
         progress_bar.innerHTML = reMember.util.progress_steps[step];
         document.querySelector("#progress").classList.remove("d-none");

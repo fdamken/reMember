@@ -108,12 +108,14 @@ window.reMember.extract_flashcards = function (config, image) {
         debug_info = {...debug_info, card_images};
         reMember.util.step_progress("make-flashcards");
         const flashcards = [];
+        let i = 0;
         for (const [left, right] of card_images) {
-            const flashcard = new reMember.anki.Flashcard(left, right);
+            const flashcard = new reMember.anki.Flashcard(left, right, config.deck_id, i);
             if (config.switch_front_back) {
                 flashcard.switch();
             }
             flashcards.push(flashcard);
+            i++;
         }
         return [flashcards, debug_info];
     } catch (error) {

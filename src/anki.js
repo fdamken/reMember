@@ -5,10 +5,10 @@ if (!window.reMember) {
 }
 
 class _Flashcard {
-    constructor(front, back) {
+    constructor(front, back, deck_id, card_index) {
         this.front = front;
         this.back = back;
-        this.id = reMember.util.random_string(100);
+        this.id = `${deck_id}-${card_index}`;
     }
 
     switch() {
