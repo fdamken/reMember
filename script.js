@@ -23,13 +23,13 @@ const draw = function (ctx, box, color, alpha, mode) {
     }
 }
 
-const render_debug_info = function (config, image, debug_info) {
+const show_preview = function (config, image, debug_info) {
     if (!config.debug) return;
 
-    const debug_canvas = document.querySelector("#debug-canvas");
-    debug_canvas.width = image.width;
-    debug_canvas.height = image.height;
-    const ctx = debug_canvas.getContext("2d");
+    const canvas = document.querySelector("#preview-canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const ctx = canvas.getContext("2d");
     ctx.drawImage(image, 0, 0);
     draw(ctx, debug_info.horizontal_separator_box, "#FF0000", .2, "box");
     if (debug_info.horizontal_separator_box && debug_info.horizontal_separators) {
@@ -78,6 +78,12 @@ const render_debug_info = function (config, image, debug_info) {
     for (const box of [].concat(...(debug_info.card_boxes || []), ...(debug_info.card_boundaries || []))) {
         draw(ctx, box, "#0000FF", .2, "box");
     }
+
+    document.querySelector("#preview-placeholder").classList.add("d-none");
+    const numCards = document.querySelector("#preview-num-cards");
+    numCards.innerHTML = `${(debug_info.card_boxes || []).length} Cards`;
+    numCards.classList.remove("d-none");
+    canvas.classList.remove("d-none");
 };
 
 const make_processor = function (config, image) {
@@ -85,7 +91,7 @@ const make_processor = function (config, image) {
         alert(error);
         console.error(error);
         if (error instanceof reMember.util.ReMemberError) {
-            render_debug_info(config, image, error.debug_info);
+            show_preview(config, image, error.debug_info);
         }
     };
 
@@ -95,9 +101,10 @@ const make_processor = function (config, image) {
                 config,
                 reMember.util.Image.from_html_image(image),
             );
-            render_debug_info(config, image, debug_info);
+            show_preview(config, image, debug_info);
+            reMember.util.step_progress("write-anki-package");
             reMember.anki.write_to_package(config, flashcards).catch(handle_error).then(function () {
-                document.querySelector("#loading").setAttribute("hidden", "");
+                reMember.util.step_progress("download");
             });
         } catch (error) {
             handle_error(error);
@@ -125,7 +132,7 @@ window.onload = function () {
         reMember.util.random_int(1 << 30, 1 << 31),
         "reMember",
         "reMember.apkg",
-        false,
+        true,
     );
 
     const image = new Image();
@@ -145,7 +152,17 @@ window.onload = function () {
 
     const input = document.querySelector("#file");
     input.addEventListener("change", function () {
-        document.querySelector("#loading").removeAttribute("hidden");
+        reMember.util.reset_progress({
+            "init": "",
+            "load-image": "Loading image",
+            "extract-card-boxes": "Extracting card boxes",
+            "extract-card-boundaries": "Extracting card boundaries",
+            "extract-card-images": "Extracting card images",
+            "make-flashcards": "Making flashcards",
+            "write-anki-package": "Writing Anki package",
+            "download": "Initiating download",
+        });
+        reMember.util.step_progress("load-image");
         reader.readAsDataURL(input.files[0]);
         return false;
     });

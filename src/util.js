@@ -182,4 +182,23 @@ window.reMember.util = {
         }
         return result;
     },
+    progress_steps: null,
+    step_progress(step) {
+        if (reMember.util.progress_steps === null) {
+            throw new Error("reset_progress must be called before step_progress");
+        }
+        const keys = Object.keys(reMember.util.progress_steps);
+        const i = keys.indexOf(step);
+        if (i < 0) throw new Error(`step ${step} not in ${reMember.util.progress_steps}`);
+        const progress_bar = document.querySelector("#progress-bar");
+        console.log(`${i / (keys.length - 1) * 100}%`);
+        progress_bar.style.width = `${i / (keys.length - 1) * 100}%`;
+        progress_bar.innerHTML = reMember.util.progress_steps[step];
+        document.querySelector("#progress").classList.remove("d-none");
+    },
+    reset_progress(steps) {
+        if (!("init" in steps)) throw new Error(`${steps} is missing step 'init'`);
+        reMember.util.progress_steps = steps;
+        reMember.util.step_progress("init");
+    },
 }

@@ -97,12 +97,16 @@ const extract_card_images = function (image, card_boundaries) {
 window.reMember.extract_flashcards = function (config, image) {
     let debug_info = {};
     try {
+        reMember.util.step_progress("extract-card-boxes");
         const [card_boxes, new_debug_info] = extract_card_boxes(config, image);
         debug_info = {...debug_info, ...new_debug_info, card_boxes};
+        reMember.util.step_progress("extract-card-boundaries");
         const card_boundaries = extract_card_boundaries(config, image, card_boxes);
         debug_info = {...debug_info, card_boundaries};
+        reMember.util.step_progress("extract-card-images");
         const card_images = extract_card_images(image, card_boundaries);
         debug_info = {...debug_info, card_images};
+        reMember.util.step_progress("make-flashcards");
         const flashcards = [];
         for (const [left, right] of card_images) {
             const flashcard = new reMember.anki.Flashcard(left, right);
